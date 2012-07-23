@@ -125,6 +125,15 @@ if not libmagic or not libmagic._name:
         except OSError:
             pass
 
+# override via a Django setting
+try:
+    from django.conf import settings
+    django_dll = getattr(settings, "LIBMAGIC_SO", None)
+    if django_dll:
+        libmagic = ctypes.CDLL(django_dll)
+except:
+    pass
+
 if not libmagic or not libmagic._name:
     # It is better to raise an ImportError since we are importing magic module
     raise ImportError('failed to find libmagic.  Check your installation')
